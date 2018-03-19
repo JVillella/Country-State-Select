@@ -1,5 +1,4 @@
 function CountryStateSelect(options) {
-
   var state_id = options['state_id'];
   var country_id = options['country_id'];
   var city_id = options['city_id'];
@@ -12,23 +11,20 @@ function CountryStateSelect(options) {
 
   return statesDropdown();
 
-  // ====== ***** METHODS ***** ===================================================================== //
   function statesDropdown() {
-
     addChosenToCountry();
     addChosenToState();
     addChosenToCity();
 
-    $("#" + country_id).change(function () {
+    $("#" + country_id).change(function() {
       return findStates($(this).val());
     });
-
   }
 
-  function citiesDropdown() {
-     $("#" + state_id).change(function () {
-      return findCities($("#" + state_id).val(),$("#" + country_id).val());
-    });
+  function addChosenToCountry() {
+    if (chosenIsRequired()) {
+      $('#' + country_id).chosen(options['chosen_options']);
+    }
   }
 
   function addChosenToState(){
@@ -51,12 +47,6 @@ function CountryStateSelect(options) {
     return !$('#' + city_id).is("[type=text]");
   }
 
-  function addChosenToCountry(){
-    if (chosenIsRequired()) {
-      $('#' + country_id).chosen(options['chosen_options']);
-    }
-  }
-
   function removeChosenFromFields(){
     if (chosenIsRequired()) {
       $("#" + options['state_id'] + "_chosen").remove();
@@ -74,8 +64,13 @@ function CountryStateSelect(options) {
     return options.hasOwnProperty("chosen_ui") && options['chosen_ui'];
   }
 
-  function findStates(id) {
+  function citiesDropdown() {
+     $("#" + state_id).change(function () {
+      return findCities($("#" + state_id).val(), $("#" + country_id).val());
+    });
+  }
 
+  function findStates(id) {
     //Remove all Chosen from existing fields
     removeChosenFromFields();
     findCities('','')
@@ -113,12 +108,10 @@ function CountryStateSelect(options) {
 
   //Build the HTML for our dropdown menus
   function buildStatesDropdown(data) {
-
     if (data.length === 0) {
       html = '<input id="' + state_id + '" name="' + state_name + '" class="' + state_class + '" type="text"  type="text" value="" >';
     } else {
       html = '<select id="' + state_id + '" name="' + state_name + '" class="' + state_class + '" >';
-      html += '<option>'+ find_select_option_text('state') +'</option>'
 
       for (i = 0; i < data.length; i++) {
         html += '<option value='+data[i][0]+'>' + data[i][1] + '</option>';
@@ -135,19 +128,10 @@ function CountryStateSelect(options) {
       addChosenToState();
     }
 
-    // [142] FIXME # Is there any other way to call city method , it is adding change method in every state change 
+    // [142] FIXME # Is there any other way to call city method , it is adding change method in every state change
     if(typeof city_name !== "undefined" ){
       citiesDropdown();
     };
-
-  }
-
-  function find_select_option_text(type){
-     if (type === 'city'){
-       return options['city_place_holder'];
-     }else{
-       return options['state_place_holder']
-     }
 
   }
 
@@ -157,7 +141,6 @@ function CountryStateSelect(options) {
       html = '<input id="' + city_id + '" name="' + city_name + '" class="' + city_class + '" type="text"  type="text" value="" >';
     } else {
       html = '<select id="' + city_id + '" name="' + city_name + '" class="' + city_class + '" >';
-      html += '<option>'+ find_select_option_text('city') +'</option>'
       for (i = 0; i < data.length; i++) {
         html += '<option>' + data[i] + '</option>';
       }
@@ -171,7 +154,5 @@ function CountryStateSelect(options) {
     if (data.length > 0) {
       addChosenToCity();
     }
-
   }
-
 }
