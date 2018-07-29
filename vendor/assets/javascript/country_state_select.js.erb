@@ -108,20 +108,8 @@ function CountryStateSelect(options) {
 
   //Build the HTML for our dropdown menus
   function buildStatesDropdown(data) {
-    if (data.length === 0) {
-      html = '<input id="' + state_id + '" name="' + state_name + '" class="' + state_class + '" type="text"  type="text" value="" >';
-    } else {
-      html = '<select id="' + state_id + '" name="' + state_name + '" class="' + state_class + '" >';
-
-      for (i = 0; i < data.length; i++) {
-        html += '<option value='+data[i][0]+'>' + data[i][1] + '</option>';
-      }
-
-      html += '</select>';
-    }
-
-
-    $('#' + state_id).replaceWith(html);
+    data = data.map(function(x) { return {text: x[1], value: x[0]}; });
+    $('#' + state_id).replaceOptions(data);
 
     //This has to happen AFTER we've replaced the dropdown or text
     if (data.length > 0) {
@@ -132,23 +120,11 @@ function CountryStateSelect(options) {
     if(typeof city_name !== "undefined" ){
       citiesDropdown();
     };
-
   }
 
   function buildCitiesDropdown(data) {
-
-    if (data.length === 0) {
-      html = '<input id="' + city_id + '" name="' + city_name + '" class="' + city_class + '" type="text"  type="text" value="" >';
-    } else {
-      html = '<select id="' + city_id + '" name="' + city_name + '" class="' + city_class + '" >';
-      for (i = 0; i < data.length; i++) {
-        html += '<option>' + data[i] + '</option>';
-      }
-
-      html += '</select>';
-    }
-
-    $('#' + city_id).replaceWith(html);
+    data = data.map(function(x) { return {text: x}; });
+    $('#' + city_id).replaceOptions(data);
 
     //This has to happen AFTER we've replaced the dropdown or text
     if (data.length > 0) {
@@ -156,3 +132,21 @@ function CountryStateSelect(options) {
     }
   }
 }
+
+// https://stackoverflow.com/a/16654226
+(function($, window) {
+  $.fn.replaceOptions = function(options) {
+    var self, $option;
+
+    this.empty();
+    self = this;
+
+    $.each(options, function(index, option) {
+      $option = $("<option></option>").text(option.text);
+      if ('value' in option) {
+        $option.attr("value", option.value);
+      }
+      self.append($option);
+    });
+  };
+})(jQuery, window);
